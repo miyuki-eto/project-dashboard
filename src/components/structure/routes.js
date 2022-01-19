@@ -4,7 +4,7 @@ import Tokens from "../pages/tokens";
 export const routes = [
     {
         path: '/',
-        name: 'home',
+        name: 'watchlist',
         exact: true,
         main: () => <Tokens/>
     }

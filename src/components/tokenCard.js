@@ -6,7 +6,7 @@ import TokenPrice from "./subcomponents/tokenPrice";
 import SupplyList from "./subcomponents/supplyList";
 import MarketCapList from "./subcomponents/marketCapList";
 
-export default function TokenCard({data, chartData, timeframe, loadingChart, setTimeframe}) {
+export default function TokenCard({data, chartData, timeframe, loadingChart, setTimeframe, loadingInfo}) {
 
     const timeframes = ["24h", "7d", "30d", "90d", "365d"];
 
@@ -14,7 +14,7 @@ export default function TokenCard({data, chartData, timeframe, loadingChart, set
         color: [
             '#e8c2ca',
             '#735d78',
-            '#219ebc',
+            '#6ac8b9',
             '#d48265',
             '#91c7ae',
             '#e8c2ca',
@@ -149,28 +149,33 @@ export default function TokenCard({data, chartData, timeframe, loadingChart, set
     };
 
     return (
-        <div
-            className="flex flex-col content-center items-center justify-center w-full gap-2 px-4 py-4">
-            <div className="flex flex-row w-full gap-1 content-center items-center justify-center px-12">
-                <TokenPrice data={data} />
-                <SupplyList data={data} />
-                <MarketCapList data={data} />
+        <>
+            <div
+                className={(loadingInfo ? " hidden " : "  ") + "flex flex-col content-center items-center justify-center w-full gap-2 px-4 py-4"}>
+                <div className="flex flex-row w-full gap-1 content-center items-center justify-center px-12">
+                    <TokenPrice data={data}/>
+                    <SupplyList data={data}/>
+                    <MarketCapList data={data}/>
+                </div>
+                <div className="flex flex-row gap-2 ">
+                    {timeframes.map((time, index) => (
+                        <TimeframeButton key={index} timeframe={time} global={timeframe} setTimeframe={setTimeframe}/>
+                    ))
+                    }
+                </div>
+                <div className={(loadingChart ? " hidden " : "  ") + "w-full mt-4"}>
+                    <EChart
+                        options={chart_options}
+                        height={'550px'}
+                    />
+                </div>
+                <div className={(loadingChart ? "  " : " hidden ") + "w-full mx-auto my-auto"}>
+                    <p>loading...</p>
+                </div>
             </div>
-            <div className="flex flex-row gap-2 ">
-                {timeframes.map((time, index) => (
-                    <TimeframeButton key={index} timeframe={time} global={timeframe} setTimeframe={setTimeframe}/>
-                ))
-                }
-            </div>
-            <div className={(loadingChart ? " hidden " : "  ") + "w-full mt-4"}>
-                <EChart
-                    options={chart_options}
-                    height={'600px'}
-                />
-            </div>
-            <div className={(loadingChart ? "  " : " hidden ") + "w-full mx-auto my-auto"}>
+            <div className={(loadingInfo ? "  " : " hidden ") + "w-full mx-auto my-auto"}>
                 <p>loading...</p>
             </div>
-        </div>
+        </>
     );
 }

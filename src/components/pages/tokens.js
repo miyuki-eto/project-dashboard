@@ -28,7 +28,27 @@ export default function Tokens() {
     });
     const [tokenList, setTokenList] = useState([]);
     const [watchlistData, setWatchlistData] = useState([]);
-    const [data, setData] = useState([]);
+    const [data, setData] = useState([{
+        image: {small: '-'},
+        name: '-',
+        symbol: '-',
+        market_data: {
+            current_price: {usd: 0},
+            price_change_percentage_24h: 0,
+            price_change_percentage_7d: 0,
+            price_change_percentage_30d: 0,
+            max_supply: 0,
+            total_supply: 0,
+            circulating_supply: 0,
+            market_cap: {usd: 0},
+            fully_diluted_valuation: {usd: 0}
+        },
+        links: {
+            twitter_screen_name: '-',
+            homepage: ['-'],
+        },
+        market_cap_rank: 0
+    }]);
     const [chartData, setChartData] = useState([]);
 
 
@@ -40,6 +60,9 @@ export default function Tokens() {
     useEffect(() => {
         const fetchData = async () => {
             console.log("initial mount")
+            setLoading(true);
+            setLoadingInfo(true);
+            setLoadingChart(true);
             const tokenListIn = await getTokenList();
             setTokenList(tokenListIn);
 
@@ -48,6 +71,7 @@ export default function Tokens() {
 
             const currentData = await getCurrentData(current);
             setData(currentData);
+            console.log(currentData)
 
             const chartDataIn = await getChartData(tokenListIn, current, timeframe);
             setChartData(chartDataIn);
@@ -97,7 +121,9 @@ export default function Tokens() {
     useInterval(() => {
         const updateInterval = async () => {
             console.log("update interval")
-
+            setLoading(true);
+            // setLoadingInfo(true);
+            setLoadingChart(true);
             const watchlistDataIn = await getWatchlistData(watchlist);
             setWatchlistData(watchlistDataIn);
 
@@ -107,6 +133,8 @@ export default function Tokens() {
             const chartDataIn = await getChartData(tokenList, current, timeframe);
             setChartData(chartDataIn);
             setLoading(false);
+            // setLoadingInfo(false);
+            setLoadingChart(false);
         }
         updateInterval()
     }, 600000);
@@ -124,25 +152,27 @@ export default function Tokens() {
         <div className="px-8 mx-auto my-auto">
             <div
                 className="flex flex-col w-full content-center items-center gap-4 px-4 text-gray-600 dark:text-gray-300 ">
-                <div className="flex flex-row gap-4 w-full p-4 justify-center content-center text-center">
-                    <div
-                        className="grid grid-cols-3 w-full gap-4 justify-start">
-                        {watchlistData.map((project, index) => (
-                            <div
-                                key={index}
-                                // onClick={setCurrent(project)}
-                            >
-                                <button
-                                    onClick={() => {
-                                        setCurrent(project.id)
-                                        localStorage.setItem("current", JSON.stringify(project.id));
-                                    }}
-                                    className="items-center text-center w-full text-lg pt-2 text-gray-600 dark:text-gray-300 bg-white dark:bg-custom-gray-a shadow-lg rounded-2xl"
+                <div className="flex flex-row gap-4 w-full p-4 justify-start content-start text-center">
+                    <div className={"w-full"}>
+                        <div
+                            className="grid grid-cols-4 w-full gap-4 justify-start">
+                            {watchlistData.map((project, index) => (
+                                <div
+                                    key={index}
+                                    // onClick={setCurrent(project)}
                                 >
-                                    <WatchlistCard data={project}/>
-                                </button>
-                            </div>
-                        ))}
+                                    <button
+                                        onClick={() => {
+                                            setCurrent(project.id)
+                                            localStorage.setItem("current", JSON.stringify(project.id));
+                                        }}
+                                        className="items-center text-center w-full text-lg pt-2 text-gray-600 dark:text-gray-300 bg-white dark:bg-custom-gray-a shadow-lg rounded-2xl"
+                                    >
+                                        <WatchlistCard data={project}/>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                     <div
                         className={(loading ? " hidden " : "  ") + " flex flex-col w-full gap-2 py-4 items-center justify-center text-gray-600 dark:text-gray-300 bg-white dark:bg-custom-gray-a shadow-lg rounded-lg"}>
@@ -217,6 +247,7 @@ export default function Tokens() {
                                 timeframe={timeframe}
                                 setTimeframe={setTimeframe}
                                 loadingChart={loadingChart}
+                                loadingInfo={loadingInfo}
                             />
                         </div>
                         <div
