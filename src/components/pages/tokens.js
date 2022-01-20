@@ -156,13 +156,43 @@ export default function Tokens() {
     }
 
 
+    // function gridColumns(value) {
+    //     return " grid-cols-" + value + " "
+    // }
+
     function gridColumns(value) {
-        return " grid-cols-" + value + " "
+        if (gridCols === 2) {
+            return " grid-cols-2 "
+        } else if (gridCols === 3) {
+            return " grid-cols-3 "
+        } else if (gridCols === 4) {
+            return " grid-cols-4 "
+        } else if (gridCols === 5) {
+            return " grid-cols-5 "
+        } else if (gridCols === 6) {
+            return " grid-cols-6 "
+        } else if (gridCols === 7) {
+            return " grid-cols-7 "
+        } else if (gridCols === 8) {
+            return " grid-cols-8 "
+        } else if (gridCols === 9) {
+            return " grid-cols-9 "
+        } else if (gridCols === 10) {
+            return " grid-cols-10 "
+        } else if (gridCols === 11) {
+            return " grid-cols-11 "
+        } else if (gridCols === 12) {
+            return " grid-cols-12 "
+        } else if (gridCols === 1) {
+            return " grid-cols-1 "
+        }
     }
 
     function incrementCols() {
-        setGridCols(gridCols + 1)
-        localStorage.setItem("gridCols", JSON.stringify(gridCols + 1));
+        if (gridCols < 12) {
+            setGridCols(gridCols + 1)
+            localStorage.setItem("gridCols", JSON.stringify(gridCols + 1));
+        }
     }
 
     function decreaseCols() {
