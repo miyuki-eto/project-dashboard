@@ -18,7 +18,7 @@ export default function WatchlistCard({data}) {
             '#546570',
             '#21dff6'
         ],
-        grid: {top: 0, right: 0, bottom: 0, left: 0},
+        grid: {top: 0, right: 15, bottom: 0, left: 0},
         animationEasing: 'quadraticInOut',
         animationEasingUpdate: 'quadraticInOut',
         animationDuration: 2000,
@@ -54,18 +54,18 @@ export default function WatchlistCard({data}) {
 
     return (
         <div
-            className="items-center text-center justify-center content-center">
+            className="items-center text-center justify-center content-center w-full">
             <EChart
                 options={chart_options}
                 height={'125px'}
             />
-            <div className={"flex flex-row gap-3 text-center justify-center content-center items-center mt-1"}>
+            <div className={"flex flex-row gap-3 text-center justify-center content-center items-center mt-1 w-full"}>
                 <img src={data.image} alt="logo" className="w-6"/>
                 <p className={"text-xl"}>{data.symbol}</p>
             </div>
 
             <div
-                className="flex flex-row gap-2 text-sm mx-2 px-2 items-center text-center justify-center content-center mb-1">
+                className="flex flex-row gap-2 text-sm mx-2 px-2 items-center text-center justify-center content-center mb-1 w-full">
                 <p className="text-xl">{formatCurrency(data.current_price)}</p>
                 <p className={`${data.price_change_percentage_24h > 0 ? " text-green-500 " : " text-red-500 "}` + " "}>
                     {data.price_change_percentage_24h.toFixed(2) + "%"}

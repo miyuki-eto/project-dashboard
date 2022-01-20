@@ -5,8 +5,8 @@ export default function TokenPrice({data}) {
 
     return (
         <div className="flex flex-col gap-2 w-56 items-center">
-            <div className="flex flex-row items-start gap-1 justify-center content-center text-center mr-4">
-                <img src={data.image.small} alt="logo" className="mx-auto mt-4"/>
+            <div className="flex flex-row items-center gap-1 justify-center content-center text-center mr-4">
+                <img src={data.image.small} alt="logo" className="w-20"/>
                 <div className="flex flex-col gap-1 content-center justify-center text-center ml-2">
                     <p className="text-3xl">{data.name.toLowerCase()}</p>
                     <p className="text-xl">{data.symbol.toLowerCase()}</p>

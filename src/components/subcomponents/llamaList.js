@@ -1,7 +1,7 @@
 import React from "react";
 import {currencyFormatZero, numberWithCommas} from "../functions/format";
 
-export default function MarketCapList({ data }) {
+export default function LlamaList({ data }) {
 
     return (
         <div className="flex flex-col gap-2 px-2 py-2 dark:border-gray-700 rounded w-64">

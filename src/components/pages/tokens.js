@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import TokenCard from "../../components/tokenCard";
 import WatchlistCard from "../watchlistCard";
 
@@ -6,13 +6,14 @@ import {ReactSearchAutocomplete} from 'react-search-autocomplete'
 import axios from "axios";
 import axiosThrottle from 'axios-request-throttle';
 
-import {AiFillStar} from 'react-icons/ai';
-import {AiOutlineStar} from 'react-icons/ai';
+import {AiFillStar, AiOutlineStar} from 'react-icons/ai';
+import {MdShowChart} from 'react-icons/md';
 import {CgNotes} from "react-icons/all";
+import {AiOutlinePlus, AiOutlineMinus} from "react-icons/all";
 
-import {removeWatchlist, addWatchlist} from "../functions/watchlist";
-import {useInterval, useDidMountEffect} from "../functions/useInterval";
-import {getTokenList, getWatchlistData, getCurrentData, getChartData} from "../functions/api";
+import {addWatchlist, removeWatchlist} from "../functions/watchlist";
+import {useDidMountEffect, useInterval} from "../functions/useInterval";
+import {getChartData, getCurrentData, getTokenList, getWatchlistData, getLlamaInfo} from "../functions/api";
 
 axiosThrottle.use(axios, {requestsPerSecond: 10});
 
@@ -51,11 +52,19 @@ export default function Tokens() {
     }]);
     const [chartData, setChartData] = useState([]);
 
-
     const [loading, setLoading] = useState(true);
     const [loadingChart, setLoadingChart] = useState(true);
     const [loadingInfo, setLoadingInfo] = useState(true);
 
+    const [hideChart, setHideChart] = useState(true);
+    const [gridCols, setGridCols] = useState(() => {
+        return JSON.parse(localStorage.getItem("gridCols")) || 3;
+    });
+
+
+    const toggle = () => {
+        setHideChart(!hideChart);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -71,10 +80,11 @@ export default function Tokens() {
 
             const currentData = await getCurrentData(current);
             setData(currentData);
-            console.log(currentData)
+            // console.log(currentData)
 
             const chartDataIn = await getChartData(tokenListIn, current, timeframe);
             setChartData(chartDataIn);
+
             setLoading(false);
             setLoadingInfo(false);
             setLoadingChart(false);
@@ -90,6 +100,7 @@ export default function Tokens() {
             setData(currentData);
             const chartDataIn = await getChartData(tokenList, current, timeframe);
             setChartData(chartDataIn);
+
             setLoadingInfo(false);
         }
         updateCurrent();
@@ -121,9 +132,6 @@ export default function Tokens() {
     useInterval(() => {
         const updateInterval = async () => {
             console.log("update interval")
-            setLoading(true);
-            // setLoadingInfo(true);
-            setLoadingChart(true);
             const watchlistDataIn = await getWatchlistData(watchlist);
             setWatchlistData(watchlistDataIn);
 
@@ -132,9 +140,6 @@ export default function Tokens() {
 
             const chartDataIn = await getChartData(tokenList, current, timeframe);
             setChartData(chartDataIn);
-            setLoading(false);
-            // setLoadingInfo(false);
-            setLoadingChart(false);
         }
         updateInterval()
     }, 600000);
@@ -148,17 +153,73 @@ export default function Tokens() {
     }
 
 
+    function gridColumns(value) {
+        return " grid-cols-" + value + " "
+    }
+
+    function incrementCols() {
+        setGridCols(gridCols + 1)
+        localStorage.setItem("gridCols", JSON.stringify(gridCols + 1));
+    }
+
+    function decreaseCols() {
+        if (gridCols > 1) {
+            setGridCols(gridCols - 1)
+            localStorage.setItem("gridCols", JSON.stringify(gridCols - 1));
+        }
+    }
+
     return (
-        <div className="px-8 mx-auto my-auto">
+        <div className="mx-auto my-auto">
             <div
-                className="flex flex-col w-full content-center items-center gap-4 px-4 text-gray-600 dark:text-gray-300 ">
-                <div className="flex flex-row gap-4 w-full p-4 justify-start content-start text-center">
+                className="flex flex-col w-full content-center items-center gap-2 text-gray-600 dark:text-gray-300 ">
+                <div className={"flex flex-row gap-2 items-center w-full justify-start"}>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            decreaseCols()
+                        }}
+                        // className="text-white focus:outline-none m-1.5 rounded px-6 py-2 font-medium bg-blue-600"
+                    >
+                        <AiOutlineMinus
+                            // onClick={() => addWatchlist(current)}
+                            className={"text-gray-500 text-2xl cursor-pointer"}
+                        />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            incrementCols()
+                            localStorage.setItem("gridCols", JSON.stringify(4));
+                        }}
+                        // className="text-white focus:outline-none m-1.5 rounded px-6 py-2 font-medium bg-blue-600"
+                    >
+                        <AiOutlinePlus
+                            // onClick={() => addWatchlist(current)}
+                            className={"text-gray-500 text-2xl cursor-pointer"}
+                        />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={toggle}
+                        // className="text-white focus:outline-none m-1.5 rounded px-6 py-2 font-medium bg-blue-600"
+                    >
+                        <MdShowChart
+                            // onClick={() => addWatchlist(current)}
+                            className={(hideChart ? "  " : " text-gray-600 dark:text-gray-300 ") + "text-gray-500 text-2xl cursor-pointer"}
+                        />
+                    </button>
+
+                </div>
+                <div className="flex flex-row gap-4 w-full justify-start content-start text-center">
                     <div className={"w-full"}>
+
                         <div
-                            className="grid grid-cols-4 w-full gap-4 justify-start">
+                            className={"grid" + gridColumns(gridCols) + "w-full gap-4 items-stretch"}>
                             {watchlistData.map((project, index) => (
                                 <div
                                     key={index}
+                                    className={"w-full"}
                                     // onClick={setCurrent(project)}
                                 >
                                     <button
@@ -175,7 +236,7 @@ export default function Tokens() {
                         </div>
                     </div>
                     <div
-                        className={(loading ? " hidden " : "  ") + " flex flex-col w-full gap-2 py-4 items-center justify-center text-gray-600 dark:text-gray-300 bg-white dark:bg-custom-gray-a shadow-lg rounded-lg"}>
+                        className={((hideChart) ? " hidden " : "  ") + " flex flex-col w-full gap-2 py-4 items-center justify-center text-gray-600 dark:text-gray-300 bg-white dark:bg-custom-gray-a shadow-lg rounded-lg"}>
 
                         <div className="flex flex-row justify-between gap-4 w-full px-8 items-center">
                             <div className="flex flex-row gap-4">
@@ -240,7 +301,7 @@ export default function Tokens() {
                         </div>
 
                         <div
-                            className={(loadingInfo ? " hidden " : "  ") + "items-center text-center w-full"}>
+                            className={((loading) ? " hidden " : "  ") + "items-center text-center w-full"}>
                             <TokenCard
                                 data={data[0]}
                                 chartData={chartData}
@@ -251,17 +312,17 @@ export default function Tokens() {
                             />
                         </div>
                         <div
-                            className={(loadingInfo ? "  " : " hidden ") + "items-center text-center w-full mx-auto my-auto"}>
+                            className={(loading ? "  " : " hidden ") + "items-center text-center w-full mx-auto my-auto"}>
                             <p>loading...</p>
                         </div>
 
                     </div>
                 </div>
 
-                <div
-                    className={`${loading ? " " : " hidden "}` + "flex flex-col content-start items-center px-4 text-gray-600 dark:text-gray-300 mx-auto my-auto"}>
-                    <p>loading...</p>
-                </div>
+                {/*<div*/}
+                {/*    className={`${loading ? " " : " hidden "}` + "flex flex-col content-start items-center px-4 text-gray-600 dark:text-gray-300 mx-auto my-auto"}>*/}
+                {/*    <p>loading...</p>*/}
+                {/*</div>*/}
             </div>
         </div>
     );

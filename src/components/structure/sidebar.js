@@ -18,7 +18,7 @@ function Sidebar() {
     }
     return (
         <div
-            className={(expand ? "w-48 " : "w-16 ") + "hidden md:flex flex-col items-center justify-between "}>
+            className={(expand ? "w-48 " : "w-14 ") + "hidden md:flex flex-col items-center justify-between "}>
             <div className="w-full p-4 flex flex-col gap-4 items-center">
                 {/*<div className={(expand ? "text-left w-full " : "text-center ") + "transition duration-500 ease-in-out rounded-full p-2 "}>*/}
                 {/*    <FiMenu*/}

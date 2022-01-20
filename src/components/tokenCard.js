@@ -151,8 +151,8 @@ export default function TokenCard({data, chartData, timeframe, loadingChart, set
     return (
         <>
             <div
-                className={(loadingInfo ? " hidden " : "  ") + "flex flex-col content-center items-center justify-center w-full gap-2 px-4 py-4"}>
-                <div className="flex flex-row w-full gap-1 content-center items-center justify-center px-12">
+                className={(loadingInfo ? " hidden " : "  ") + "flex flex-col content-center items-center justify-center w-full gap-2 px-4 pb-4 pl-4 pr-4"}>
+                <div className="flex flex-row w-full gap-1 content-center items-center justify-center px-8">
                     <TokenPrice data={data}/>
                     <SupplyList data={data}/>
                     <MarketCapList data={data}/>
@@ -173,7 +173,7 @@ export default function TokenCard({data, chartData, timeframe, loadingChart, set
                     <p>loading...</p>
                 </div>
             </div>
-            <div className={(loadingInfo ? "  " : " hidden ") + "w-full mx-auto my-auto"}>
+            <div className={(loadingInfo ? "  " : " hidden ") + "w-full mx-auto my-auto h-full"}>
                 <p>loading...</p>
             </div>
         </>

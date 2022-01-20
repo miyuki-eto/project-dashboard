@@ -38,7 +38,7 @@ export async function getCurrentData(current) {
 async function getLlamaList() {
     const data = [];
     await axios.get("https://api.llama.fi/protocols").then(x => {
-        // console.log(x.functions)
+        // console.log(x)
         data.push(x.data)
     })
     return data[0];
@@ -109,8 +109,9 @@ async function getLlamaData(filter, llamaId, geckoData) {
     const llama_id = llamaId["id"];
     const llama_type = llamaId["project"];
     if (llama_type === "protocol") {
-        await axios.get("https://api.llama.fi/protocol/" + llama_id).then(x => {
+            await axios.get("https://api.llama.fi/protocol/" + llama_id).then(x => {
             // console.log(x.functions)
+            console.log(x.data)
             x.data.tvl.forEach((y) => {
                 if (y["date"] >= filter) {
                     data.push(y)
@@ -134,6 +135,7 @@ async function getLlamaData(filter, llamaId, geckoData) {
     // console.log(functions[0])
     const newData = [];
     data.forEach((x) => {
+        // console.log(x)
         const y = {};
         y["timestamp"] = parseInt(x.date * 1000);
         y["totalLiquidityUSD"] = x.totalLiquidityUSD;
