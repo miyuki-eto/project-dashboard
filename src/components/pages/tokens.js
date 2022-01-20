@@ -203,7 +203,7 @@ export default function Tokens() {
     }
 
     return (
-        <div className="mx-auto my-auto">
+        <div className="mx-auto my-auto w-full h-full pr-12">
             <div
                 className="flex flex-col w-full content-center items-center gap-2 text-gray-600 dark:text-gray-300 ">
                 <div className={"flex flex-row gap-2 items-center w-full justify-start"}>
@@ -244,15 +244,15 @@ export default function Tokens() {
                     </button>
 
                 </div>
-                <div className="flex flex-row gap-4 w-full justify-start content-start text-center">
+                <div className="flex flex-row gap-4 w-full h-full justify-start content-start text-center">
                     <div className={"w-full"}>
 
                         <div
-                            className={"grid" + gridColumns(gridCols) + "w-full gap-4 items-stretch"}>
+                            className={"grid" + gridColumns(gridCols) + "w-full h-full gap-4 items-stretch"}>
                             {watchlistData.map((project, index) => (
                                 <div
                                     key={index}
-                                    className={"w-full"}
+                                    className={"w-full h-full"}
                                     // onClick={setCurrent(project)}
                                 >
                                     <button
