@@ -166,7 +166,7 @@ export default function TokenCard({data, chartData, timeframe, loadingChart, set
                 <div className={(loadingChart ? " hidden " : "  ") + "w-full mt-4"}>
                     <EChart
                         options={chart_options}
-                        height={'550px'}
+                        height={'530px'}
                     />
                 </div>
                 <div className={(loadingChart ? "  " : " hidden ") + "w-full mx-auto my-auto"}>

@@ -203,7 +203,7 @@ export default function Tokens() {
     }
 
     return (
-        <div className="mx-auto my-auto w-full h-full pr-12">
+        <div className="mx-auto my-auto w-full h-full pr-12 pb-12">
             <div
                 className="flex flex-col w-full content-center items-center gap-2 text-gray-600 dark:text-gray-300 ">
                 <div className={"flex flex-row gap-2 items-center w-full justify-start"}>
