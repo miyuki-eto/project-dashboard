@@ -6,16 +6,16 @@ import {Link} from "react-router-dom";
 // import {FiMenu} from 'react-icons/fi';
 // import {addWatchlist} from "../functions/watchlist";
 // import {AiOutlineStar} from "react-icons/ai";
-import {AiOutlineTwitter} from "react-icons/ai";
+// import {AiOutlineTwitter} from "react-icons/ai";
 
 
 function Sidebar() {
 
     const [expand, setExpand] = useState(false)
 
-    const handleToggle = () => {
-        setExpand(prev => !prev)
-    }
+    // const handleToggle = () => {
+    //     setExpand(prev => !prev)
+    // }
     return (
         <div
             className={(expand ? "w-48 " : "w-14 ") + "hidden md:flex flex-col items-center justify-between "}>
@@ -50,9 +50,9 @@ function Sidebar() {
                 {/*</div>*/}
             </div>
             <div className={"flex flex-col gap-2 justify-center items-center"}>
-                <a href='https://twitter.com/miyuki_crypto' target="_blank" rel="noreferrer">
-                    <AiOutlineTwitter className={"text-xl text-center text-gray-600 dark:text-gray-300"}/>
-                </a>
+                {/*<a href='https://twitter.com/miyuki_crypto' target="_blank" rel="noreferrer">*/}
+                {/*    <AiOutlineTwitter className={"text-xl text-center text-gray-600 dark:text-gray-300"}/>*/}
+                {/*</a>*/}
                 <div className="mb-2">
                     <Toggle/>
                 </div>

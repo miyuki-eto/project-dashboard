@@ -13,7 +13,7 @@ import {AiOutlinePlus, AiOutlineMinus} from "react-icons/all";
 
 import {addWatchlist, removeWatchlist} from "../functions/watchlist";
 import {useDidMountEffect, useInterval} from "../functions/useInterval";
-import {getChartData, getCurrentData, getTokenList, getWatchlistData, getLlamaInfo} from "../functions/api";
+import {getChartData, getCurrentData, getTokenList, getWatchlistData } from "../functions/api";
 
 axiosThrottle.use(axios, {requestsPerSecond: 10});
 
@@ -56,7 +56,9 @@ export default function Tokens() {
     const [loadingChart, setLoadingChart] = useState(true);
     const [loadingInfo, setLoadingInfo] = useState(true);
 
-    const [hideChart, setHideChart] = useState(true);
+    const [hideChart, setHideChart] = useState(() => {
+        return JSON.parse(localStorage.getItem("hideChart")) || false;
+    });
     const [gridCols, setGridCols] = useState(() => {
         return JSON.parse(localStorage.getItem("gridCols")) || 3;
     });
@@ -64,6 +66,7 @@ export default function Tokens() {
 
     const toggle = () => {
         setHideChart(!hideChart);
+        localStorage.setItem("hideChart", JSON.stringify(!hideChart));
     };
 
     useEffect(() => {
@@ -142,7 +145,7 @@ export default function Tokens() {
             setChartData(chartDataIn);
         }
         updateInterval()
-    }, 600000);
+    }, 60000);
 
 
     const handleOnSelect = (item) => {

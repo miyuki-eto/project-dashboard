@@ -81,21 +81,26 @@ async function getLlamaId(tokens) {
 
 
 async function getPriceData(timeframe, current) {
-    const data = [];
+    let data = [{
+        prices: [0,0],
+        market_caps: [[0,0],[0,0]]
+    }];
     const now = Math.floor(Date.now() / 1000);
     const from = timeCalc(now, timeframe);
-    // console.log(now)
     await axios.get("https://api.coingecko.com/api/v3/coins/" + current + "/market_chart/range?vs_currency=usd&from=" + from + "&to=" + now).then(x => {
-        // console.log(x.functions)
         data.push(x.data)
+        data = [x.data]
     })
-    // console.log(functions[0])
     const formattedData = [];
     data[0].prices.forEach((x, i) => {
         const entry = {};
         entry.timestamp = x[0]
         entry.price = x[1]
-        entry.market_cap = data[0].market_caps[i][1]
+        data[0].market_caps.forEach((y, h) => {
+            if (y[0] === x[0]) {
+                entry.market_cap = y[1]
+            }
+        })
         formattedData.push(entry)
     })
 
