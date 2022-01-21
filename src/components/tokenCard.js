@@ -5,10 +5,12 @@ import TimeframeButton from "./subcomponents/timeframeButton";
 import TokenPrice from "./subcomponents/tokenPrice";
 import SupplyList from "./subcomponents/supplyList";
 import MarketCapList from "./subcomponents/marketCapList";
+import DenomButton from "./subcomponents/denomButton";
 
-export default function TokenCard({data, chartData, timeframe, loadingChart, setTimeframe, loadingInfo}) {
+export default function TokenCard({data, chartData, timeframe, loadingChart, loadingInfo, setTimeframe, denom, setDenom}) {
 
     const timeframes = ["24h", "7d", "30d", "90d", "365d"];
+    const denominations = ["usd", "eth"];
 
     const chart_options = {
         color: [
@@ -151,17 +153,29 @@ export default function TokenCard({data, chartData, timeframe, loadingChart, set
     return (
         <>
             <div
-                className={(loadingInfo ? " hidden " : "  ") + "flex flex-col content-center items-center justify-center w-full gap-2 px-4 pb-4 pl-4 pr-4"}>
+                className={(loadingInfo ? " hidden " : "  ") + "flex flex-col content-center items-center justify-center w-full h-full gap-2 px-4 pb-4 pl-4 pr-4"}>
                 <div className="flex flex-row w-full gap-1 content-center items-center justify-center px-8">
                     <TokenPrice data={data}/>
                     <SupplyList data={data}/>
                     <MarketCapList data={data}/>
                 </div>
-                <div className="flex flex-row gap-2 ">
-                    {timeframes.map((time, index) => (
-                        <TimeframeButton key={index} timeframe={time} global={timeframe} setTimeframe={setTimeframe}/>
-                    ))
-                    }
+                <div className={"flex flex-for w-full justify-between px-12"}>
+                    <div><p className={"hidden"}>hidden</p></div>
+                    <div className="flex flex-row gap-2 ">
+                        {timeframes.map((time, index) => (
+                            <TimeframeButton key={index} timeframe={time} global={timeframe}
+                                             setTimeframe={setTimeframe}/>
+                        ))
+                        }
+                    </div>
+                    <div className="flex flex-row gap-2">
+                        {denominations.map((d, index) => (
+                            <DenomButton key={index} denom={d} global={denom}
+                                             setDenom={setDenom}/>
+                        ))
+                        }
+                    </div>
+
                 </div>
                 <div className={(loadingChart ? " hidden " : "  ") + "w-full mt-4"}>
                     <EChart
@@ -169,11 +183,13 @@ export default function TokenCard({data, chartData, timeframe, loadingChart, set
                         height={'530px'}
                     />
                 </div>
-                <div className={(loadingChart ? "  " : " hidden ") + "w-full mx-auto my-auto"}>
+                <div
+                    className={(loadingChart ? "  " : " hidden ") + "w-full h-full mx-auto my-auto items-center content-center justify-center text-center"}>
                     <p>loading...</p>
                 </div>
             </div>
-            <div className={(loadingInfo ? "  " : " hidden ") + "w-full mx-auto my-auto h-full"}>
+            <div
+                className={(loadingInfo ? "  " : " hidden ") + "w-full mx-auto my-auto h-full items-center content-center justify-center text-center"}>
                 <p>loading...</p>
             </div>
         </>
