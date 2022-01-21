@@ -6,10 +6,7 @@ import {ReactSearchAutocomplete} from 'react-search-autocomplete'
 import axios from "axios";
 import axiosThrottle from 'axios-request-throttle';
 
-import {AiFillStar, AiOutlineStar} from 'react-icons/ai';
-import {MdShowChart} from 'react-icons/md';
-import {CgNotes} from "react-icons/all";
-import {AiOutlinePlus, AiOutlineMinus} from "react-icons/all";
+import { AiOutlinePlus, AiOutlineMinus, CgNotes, MdShowChart, AiFillStar, AiOutlineStar } from "react-icons/all";
 
 import {addWatchlist, removeWatchlist} from "../functions/watchlist";
 import {useDidMountEffect, useInterval} from "../functions/useInterval";
@@ -26,6 +23,9 @@ export default function Tokens() {
     });
     const [timeframe, setTimeframe] = useState(() => {
         return JSON.parse(localStorage.getItem("timeframe")) || "7d";
+    });
+    const [denom, setDenom] = useState(() => {
+        return JSON.parse(localStorage.getItem("denom")) || "usd";
     });
     const [tokenList, setTokenList] = useState([]);
     const [watchlistData, setWatchlistData] = useState([]);
@@ -269,7 +269,7 @@ export default function Tokens() {
                         </div>
                     </div>
                     <div
-                        className={((hideChart) ? " hidden " : "  ") + " flex flex-col w-full gap-2 py-4 items-center justify-center text-gray-600 dark:text-gray-300 bg-white dark:bg-custom-gray-a shadow-lg rounded-lg"}>
+                        className={((hideChart) ? " hidden " : "  ") + " flex flex-col w-full h-full gap-2 py-4 items-center justify-center text-gray-600 dark:text-gray-300 bg-white dark:bg-custom-gray-a shadow-lg rounded-lg"}>
 
                         <div className="flex flex-row justify-between gap-4 w-full px-8 items-center">
                             <div className="flex flex-row gap-4">
@@ -281,7 +281,7 @@ export default function Tokens() {
                             <div style={{width: 400}}>
                                 <ReactSearchAutocomplete
                                     items={tokenList}
-                                    maxResults={20}
+                                    maxResults={7}
                                     // onSearch={handleOnSearch}
                                     // onHover={handleOnHover}
                                     onSelect={handleOnSelect}
@@ -300,14 +300,14 @@ export default function Tokens() {
                                             ]
                                         }
                                     }
-                                    autoFocus
+                                    // autoFocus
                                     styling={
                                         {
                                             height: "40px",
                                             border: "1px solid #dfe1e5",
                                             borderRadius: "24px",
-                                            backgroundColor: "white",
-                                            boxShadow: "rgba(32, 33, 36, 0.28) 0px 1px 6px 0px",
+                                            backgroundColor: "#ffffff",
+                                            boxShadow: "rgba(32, 33, 36, 0.28) 0px 0px 0px 0px",
                                             hoverBackgroundColor: "#eee",
                                             color: "#212121",
                                             fontSize: "16px",
@@ -334,18 +334,20 @@ export default function Tokens() {
                         </div>
 
                         <div
-                            className={((loading) ? " hidden " : "  ") + "items-center text-center w-full"}>
+                            className={((loading) ? " hidden " : "  ") + "items-center text-center justify-center w-full h-full"}>
                             <TokenCard
                                 data={data[0]}
                                 chartData={chartData}
                                 timeframe={timeframe}
                                 setTimeframe={setTimeframe}
+                                setDenom={setDenom}
+                                denom={denom}
                                 loadingChart={loadingChart}
                                 loadingInfo={loadingInfo}
                             />
                         </div>
                         <div
-                            className={(loading ? "  " : " hidden ") + "items-center text-center w-full mx-auto my-auto"}>
+                            className={(loading ? "  " : " hidden ") + "items-center text-center w-full h-full mx-auto my-auto"}>
                             <p>loading...</p>
                         </div>
 
