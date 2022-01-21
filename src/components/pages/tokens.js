@@ -216,15 +216,21 @@ export default function Tokens() {
 
     function divideCols() {
         if (gridCols > 1) {
-            setGridCols(gridCols / 2)
-            localStorage.setItem("gridCols", JSON.stringify(gridCols / 2));
+            const newVal = Math.ceil(gridCols / 2);
+            if (0 > newVal < 13) {
+                setGridCols(newVal)
+                localStorage.setItem("gridCols", JSON.stringify(newVal));
+            }
         }
     }
 
     function multiplyCols() {
         if (gridCols < 7) {
-            setGridCols(gridCols * 2)
-            localStorage.setItem("gridCols", JSON.stringify(gridCols * 2));
+            const newVal = gridCols * 2;
+            if (0 > newVal < 13) {
+                setGridCols(newVal)
+                localStorage.setItem("gridCols", JSON.stringify(newVal));
+            }
         }
     }
 
