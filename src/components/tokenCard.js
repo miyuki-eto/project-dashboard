@@ -7,10 +7,17 @@ import SupplyList from "./subcomponents/supplyList";
 import MarketCapList from "./subcomponents/marketCapList";
 import DenomButton from "./subcomponents/denomButton";
 
+import {ThemeContext} from "./structure/themeContext";
+
 export default function TokenCard({data, chartData, timeframe, loadingChart, loadingInfo, setTimeframe, denom, setDenom}) {
 
     const timeframes = ["24h", "7d", "30d", "90d", "365d"];
     const denominations = ["usd", "eth"];
+
+    const { theme } = React.useContext(ThemeContext);
+    const colorBg = (theme === 'light') ? '#ffffff' : '#161b22';
+    const colorText = (theme === 'light') ? '#757575' : '#e0e0e0';
+    const colorInactive = (theme === 'light') ? '#e0e0e0' : '#424242';
 
     const chart_options = {
         color: [
@@ -29,7 +36,9 @@ export default function TokenCard({data, chartData, timeframe, loadingChart, loa
         grid: {top: 8, right: 160, bottom: 24, left: 0},
         legend: {
             data: ['price', 'market cap', 'tvl'],
-            icon: 'rect'
+            icon: 'rect',
+            textStyle: {color: colorText},
+            inactiveColor: colorInactive
         },
         animationEasing: 'quadraticInOut',
         animationEasingUpdate: 'quadraticInOut',

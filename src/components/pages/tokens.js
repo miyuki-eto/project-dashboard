@@ -12,6 +12,8 @@ import {addWatchlist, removeWatchlist} from "../functions/watchlist";
 import {useDidMountEffect, useInterval} from "../functions/useInterval";
 import {getChartData, getCurrentData, getTokenList, getWatchlistData } from "../functions/api";
 
+import {ThemeContext} from "../structure/themeContext";
+
 axiosThrottle.use(axios, {requestsPerSecond: 10});
 
 export default function Tokens() {
@@ -63,15 +65,25 @@ export default function Tokens() {
         return JSON.parse(localStorage.getItem("gridCols")) || 3;
     });
 
+    const { theme } = React.useContext(ThemeContext);
+    const colorSearchBg = (theme === 'light') ? '#ffffff' : '#161b22';
+    const colorSearchText = (theme === 'light') ? '#757575' : '#e0e0e0';
+    const colorSearchBorder = (theme === 'light') ? '#f5f5f5' : '#424242';
 
     const toggle = () => {
         setHideChart(!hideChart);
         localStorage.setItem("hideChart", JSON.stringify(!hideChart));
+        if (hideChart === true) {
+            divideCols()
+        } else {
+            multiplyCols()
+        }
     };
 
     useEffect(() => {
         const fetchData = async () => {
             console.log("initial mount")
+            console.log(theme)
             setLoading(true);
             setLoadingInfo(true);
             setLoadingChart(true);
@@ -202,6 +214,20 @@ export default function Tokens() {
         }
     }
 
+    function divideCols() {
+        if (gridCols > 1) {
+            setGridCols(gridCols / 2)
+            localStorage.setItem("gridCols", JSON.stringify(gridCols / 2));
+        }
+    }
+
+    function multiplyCols() {
+        if (gridCols < 7) {
+            setGridCols(gridCols * 2)
+            localStorage.setItem("gridCols", JSON.stringify(gridCols * 2));
+        }
+    }
+
     return (
         <div className="mx-auto my-auto w-full h-full pr-12 pb-12">
             <div
@@ -210,7 +236,7 @@ export default function Tokens() {
                     <button
                         type="button"
                         onClick={() => {
-                            decreaseCols()
+                            incrementCols()
                         }}
                         // className="text-white focus:outline-none m-1.5 rounded px-6 py-2 font-medium bg-blue-600"
                     >
@@ -222,7 +248,7 @@ export default function Tokens() {
                     <button
                         type="button"
                         onClick={() => {
-                            incrementCols()
+                            decreaseCols()
                             localStorage.setItem("gridCols", JSON.stringify(4));
                         }}
                         // className="text-white focus:outline-none m-1.5 rounded px-6 py-2 font-medium bg-blue-600"
@@ -281,7 +307,7 @@ export default function Tokens() {
                             <div style={{width: 400}}>
                                 <ReactSearchAutocomplete
                                     items={tokenList}
-                                    maxResults={7}
+                                    maxResults={6}
                                     // onSearch={handleOnSearch}
                                     // onHover={handleOnHover}
                                     onSelect={handleOnSelect}
@@ -304,16 +330,16 @@ export default function Tokens() {
                                     styling={
                                         {
                                             height: "40px",
-                                            border: "1px solid #dfe1e5",
+                                            border: "1px solid " + colorSearchBorder,
                                             borderRadius: "24px",
-                                            backgroundColor: "#ffffff",
+                                            backgroundColor: colorSearchBg,
                                             boxShadow: "rgba(32, 33, 36, 0.28) 0px 0px 0px 0px",
                                             hoverBackgroundColor: "#eee",
-                                            color: "#212121",
+                                            color: colorSearchText,
                                             fontSize: "16px",
                                             fontFamily: "Segoe UI",
                                             iconColor: "grey",
-                                            lineColor: "rgb(232, 234, 237)",
+                                            lineColor: colorSearchBorder,
                                             placeholderColor: "grey",
                                             clearIconMargin: '3px 14px 0 0',
                                             searchIconMargin: '0 0 0 16px'
