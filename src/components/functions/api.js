@@ -82,8 +82,8 @@ async function getLlamaId(tokens) {
 
 async function getPriceData(timeframe, current) {
     let data = [{
-        prices: [0,0],
-        market_caps: [[0,0],[0,0]]
+        prices: [0, 0],
+        market_caps: [[0, 0], [0, 0]]
     }];
     const now = Math.floor(Date.now() / 1000);
     const from = timeCalc(now, timeframe);
@@ -114,7 +114,7 @@ async function getLlamaData(filter, llamaId, geckoData) {
     const llama_id = llamaId["id"];
     const llama_type = llamaId["project"];
     if (llama_type === "protocol") {
-            await axios.get("https://api.llama.fi/protocol/" + llama_id).then(x => {
+        await axios.get("https://api.llama.fi/protocol/" + llama_id).then(x => {
             // console.log(x.functions)
             console.log(x.data)
             x.data.tvl.forEach((y) => {
@@ -211,7 +211,12 @@ async function splitData(data) {
 export async function getChartData(tokens, current, timeframe) {
     const llamaId = await getLlamaId(tokens)
     const priceDataIn = await getPriceData(timeframe, current);
-    const llamaDataIn = await getLlamaData(Math.ceil(priceDataIn[0]["timestamp"] / 1000), llamaId[current], priceDataIn);
-    const mergedIn = await mergeData(priceDataIn, llamaDataIn);
-    return await splitData(mergedIn);
+    console.log(priceDataIn)
+    if (priceDataIn.length === 0) {
+        return [[], [], [], []]
+    } else {
+        const llamaDataIn = await getLlamaData(Math.ceil(priceDataIn[0]["timestamp"] / 1000), llamaId[current], priceDataIn);
+        const mergedIn = await mergeData(priceDataIn, llamaDataIn);
+        return await splitData(mergedIn);
+    }
 }

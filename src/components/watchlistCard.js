@@ -67,8 +67,8 @@ export default function WatchlistCard({data}) {
             <div
                 className="flex flex-row gap-2 text-sm mx-2 px-2 items-center text-center justify-center content-center mb-1 w-full">
                 <p className="text-xl">{formatCurrency(data.current_price)}</p>
-                <p className={(data.price_change_percentage_24h > 0 ? " text-green-500 " : " text-red-500 ") + " "}>
-                    {data.price_change_percentage_24h.toFixed(2) + "%"}
+                <p className={data.price_change_percentage_24h != null ? (data.price_change_percentage_24h > 0 ? " text-green-500 " : " text-red-500 ") + " " : '-'}>
+                    {data.price_change_percentage_24h != null ? data.price_change_percentage_24h.toFixed(2) + "%" : '-'}
                 </p>
             </div>
 

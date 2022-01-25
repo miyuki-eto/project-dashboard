@@ -301,7 +301,7 @@ export default function Tokens() {
                         </div>
                     </div>
                     <div
-                        className={((hideChart) ? " hidden " : "  ") + " flex flex-col w-full h-full gap-2 py-4 items-center justify-center text-gray-600 dark:text-gray-300 bg-white dark:bg-custom-gray-a shadow-lg rounded-lg"}>
+                        className={((hideChart) ? " hidden " : "  ") + " flex flex-col w-full h-full gap-2 py-4 items-center justify-center text-gray-600 dark:text-gray-300 bg-white dark:bg-custom-gray-a shadow-lg rounded-2xl"}>
 
                         <div className="flex flex-row justify-between gap-4 w-full px-8 items-center">
                             <div className="flex flex-row gap-4">

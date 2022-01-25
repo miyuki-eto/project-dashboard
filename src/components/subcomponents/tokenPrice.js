@@ -14,14 +14,14 @@ export default function TokenPrice({data}) {
                 </div>
             </div>
             <div className="grid grid-cols-3 gap-1 text-sm">
-                <p className={(data.market_data.price_change_percentage_24h > 0 ? " text-green-500 " : " text-red-500 ") + " "}>
-                    {data.market_data.price_change_percentage_24h.toFixed(2) + " %"}
+                <p className={data.market_data.price_change_percentage_24h != null ? (data.market_data.price_change_percentage_24h > 0 ? " text-green-500 " : " text-red-500 ") + " " : " "}>
+                    {data.market_data.price_change_percentage_24h != null ? data.market_data.price_change_percentage_24h.toFixed(2) + " %" : '-'}
                 </p>
-                <p className={(data.market_data.price_change_percentage_7d > 0 ? " text-green-500 " : " text-red-500 ") + " "}>
-                    {data.market_data.price_change_percentage_7d.toFixed(2) + " %"}
+                <p className={data.market_data.price_change_percentage_7d != null ? (data.market_data.price_change_percentage_7d > 0 ? " text-green-500 " : " text-red-500 ") + " " : " "}>
+                    {data.market_data.price_change_percentage_7d != null ? data.market_data.price_change_percentage_7d.toFixed(2) + " %" : '-'}
                 </p>
-                <p className={(data.market_data.price_change_percentage_30d > 0 ? " text-green-500 " : " text-red-500 ") + " "}>
-                    {data.market_data.price_change_percentage_30d.toFixed(2) + " %"}
+                <p className={data.market_data.price_change_percentage_30d != null ? (data.market_data.price_change_percentage_30d > 0 ? " text-green-500 " : " text-red-500 ") + " " : " "}>
+                    {data.market_data.price_change_percentage_30d != null ? data.market_data.price_change_percentage_30d.toFixed(2) + " %" : '-'}
                 </p>
                 <p>24h </p>
                 <p>7d </p>
