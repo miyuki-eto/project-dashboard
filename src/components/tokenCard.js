@@ -34,6 +34,23 @@ export default function TokenCard({data, chartData, timeframe, loadingChart, loa
             '#21dff6'
         ],
         grid: {top: 8, right: 160, bottom: 24, left: 0},
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                animation: false,
+                label: {
+                    backgroundColor: '#505765'
+                }
+            },
+            // formatter: '{a0}: ${c0} <br /> {a1}: ${c1} <br /> {a2}: ${c2}',
+            // formatter: function (params) {
+            //
+            //     return `${params.seriesName}<br />
+            //   ${params.name}: ${params.data.price} (${params.data.market_cap}%)<br />
+            //   ${params.data.tvl}`;
+            // }
+        },
         legend: {
             data: ['price', 'market cap', 'tvl'],
             icon: 'rect',

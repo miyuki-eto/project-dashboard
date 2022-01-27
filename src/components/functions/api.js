@@ -1,4 +1,7 @@
 import axios from "axios";
+import axiosThrottle from "axios-request-throttle";
+
+axiosThrottle.use(axios, {requestsPerSecond: 10});
 
 export async function getTokenList() {
     const data = [];
@@ -80,14 +83,14 @@ async function getLlamaId(tokens) {
 }
 
 
-async function getPriceData(timeframe, current) {
+export async function getPriceData(timeframe, current, denom) {
     let data = [{
-        prices: [0,0],
-        market_caps: [[0,0],[0,0]]
+        prices: [0, 0],
+        market_caps: [[0, 0], [0, 0]]
     }];
     const now = Math.floor(Date.now() / 1000);
     const from = timeCalc(now, timeframe);
-    await axios.get("https://api.coingecko.com/api/v3/coins/" + current + "/market_chart/range?vs_currency=usd&from=" + from + "&to=" + now).then(x => {
+    await axios.get("https://api.coingecko.com/api/v3/coins/" + current + "/market_chart/range?vs_currency=" + denom +"&from=" + from + "&to=" + now).then(x => {
         data.push(x.data)
         data = [x.data]
     })
@@ -114,7 +117,7 @@ async function getLlamaData(filter, llamaId, geckoData) {
     const llama_id = llamaId["id"];
     const llama_type = llamaId["project"];
     if (llama_type === "protocol") {
-            await axios.get("https://api.llama.fi/protocol/" + llama_id).then(x => {
+        await axios.get("https://api.llama.fi/protocol/" + llama_id).then(x => {
             // console.log(x.functions)
             console.log(x.data)
             x.data.tvl.forEach((y) => {
@@ -211,7 +214,214 @@ async function splitData(data) {
 export async function getChartData(tokens, current, timeframe) {
     const llamaId = await getLlamaId(tokens)
     const priceDataIn = await getPriceData(timeframe, current);
-    const llamaDataIn = await getLlamaData(Math.ceil(priceDataIn[0]["timestamp"] / 1000), llamaId[current], priceDataIn);
-    const mergedIn = await mergeData(priceDataIn, llamaDataIn);
-    return await splitData(mergedIn);
+    if (priceDataIn.length === 0) {
+        return [[], [], [], []]
+    } else {
+        const llamaDataIn = await getLlamaData(Math.ceil(priceDataIn[0]["timestamp"] / 1000), llamaId[current], priceDataIn);
+        const mergedIn = await mergeData(priceDataIn, llamaDataIn);
+        return await splitData(mergedIn);
+    }
 }
+
+export async function getIndexTokenData(indexTokens) {
+    let text = indexTokens.join("%2C%20");
+    const data = {};
+    await axios.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=" + text + "&order=market_cap_desc&per_page=100&page=1&sparkline=true").then(x => {
+        // console.log(x.functions)
+        // console.log(x)
+        x.data.map((y) => {
+            data[y.id] = y
+        })
+    })
+    return data;
+}
+
+export async function getIndexTokenPrices(tokens, timeframe, denom) {
+    let data = [];
+    const now = Math.floor(Date.now() / 1000);
+    const from = timeCalc(now, timeframe);
+    await Promise.all(tokens.map(u => axios.get("https://api.coingecko.com/api/v3/coins/" + u + "/market_chart/range?vs_currency=" + denom + "&from=" + from + "&to=" + now)))
+        .then(responses => {
+                responses.map((results, index) => {
+                        data.push(results.data)
+                    }
+                )
+            }
+        )
+
+    const formattedData = {};
+    data.forEach((x, i) => {
+        const entries = [];
+        x.prices.forEach((y, i) => {
+            const entry = {};
+            entry.timestamp = y[0]
+            entry.price = y[1]
+            x.market_caps.forEach((z, h) => {
+                if (z[0] === y[0]) {
+                    entry.market_cap = z[1]
+                }
+            })
+            entries.push(entry)
+        })
+        formattedData[tokens[i]] = entries
+    })
+    return formattedData;
+}
+
+export async function getIndexTokenPriceData(tokens, timeframe, denom, indexes) {
+    const priceDataIn = await getIndexTokenPrices(tokens, timeframe, denom);
+    const output = {};
+    Object.keys(indexes).forEach((x, i) => {
+            const indexTokens = getIndexTokensSingle(indexes[x])
+            output[x] = {
+                equal: getEqualData(indexTokens, priceDataIn),
+                manual: getManualData(indexTokens, priceDataIn),
+                cap: getCapData(indexTokens, priceDataIn),
+                vol: getVolData(indexTokens, priceDataIn),
+            }
+    })
+    // console.log(output)
+    return output;
+}
+
+function getIndexTokensSingle(data) {
+    const tokenList = [];
+    for (let x of Object.keys(data.assets)) {
+        tokenList.push(x);
+    }
+    return tokenList
+}
+
+export function getEqualData(tokens, data) {
+    let output = [];
+    // let out = [];
+    // const timeList = [];
+    const timeList = [];
+    const priceList = [];
+    const capList = [];
+    tokens.forEach((x, i) => {
+        // console.log(x)
+        // console.log(data)
+        if (i === 0) {
+            output = data[x]
+        } else {
+            data[x].forEach((y, h) => {
+                // console.log(output[h])
+                if (output[h] !== undefined) {
+                    output[h].price = (output[h].price + y.price) / tokens.length
+                    output[h].market_cap = (output[h].market_cap + y.market_cap) / tokens.length
+                }
+            })
+        }
+    })
+
+    output.forEach((x, i) => {
+        // out.push([x.timestamp, x.price, x.market_cap]);
+        timeList.push([x.timestamp, x.price]);
+        priceList.push([x.timestamp, x.price]);
+        capList.push([x.timestamp, x.market_cap]);
+    })
+    // console.log(output);
+    return [timeList, priceList];
+}
+
+export function getManualData(tokens, data) {
+    let output = [];
+    // let out = [];
+    // const timeList = [];
+    const timeList = [];
+    const priceList = [];
+    const capList = [];
+    tokens.forEach((x, i) => {
+        // console.log(x)
+        // console.log(data)
+        if (i === 0) {
+            output = data[x]
+        } else {
+            data[x].forEach((y, h) => {
+                // console.log(output[h])
+                if (output[h] !== undefined) {
+                    output[h].price = (output[h].price + y.price) / tokens.length * 2
+                    output[h].market_cap = (output[h].market_cap + y.market_cap) / tokens.length * 2
+                }
+            })
+        }
+    })
+
+    output.forEach((x, i) => {
+        // out.push([x.timestamp, x.price, x.market_cap]);
+        timeList.push([x.timestamp, x.price]);
+        priceList.push([x.timestamp, x.price]);
+        capList.push([x.timestamp, x.market_cap]);
+    })
+    // console.log(output);
+    return [timeList, priceList];
+}
+
+export function getCapData(tokens, data) {
+    let output = [];
+    // let out = [];
+    // const timeList = [];
+    const timeList = [];
+    const priceList = [];
+    const capList = [];
+    tokens.forEach((x, i) => {
+        // console.log(x)
+        // console.log(data)
+        if (i === 0) {
+            output = data[x]
+        } else {
+            data[x].forEach((y, h) => {
+                // console.log(output[h])
+                if (output[h] !== undefined) {
+                    output[h].price = (output[h].price + y.price) / tokens.length * 3
+                    output[h].market_cap = (output[h].market_cap + y.market_cap) / tokens.length * 3
+                }
+            })
+        }
+    })
+
+    output.forEach((x, i) => {
+        // out.push([x.timestamp, x.price, x.market_cap]);
+        timeList.push([x.timestamp, x.price]);
+        priceList.push([x.timestamp, x.price]);
+        capList.push([x.timestamp, x.market_cap]);
+    })
+    // console.log(output);
+    return [timeList, priceList];
+}
+
+export function getVolData(tokens, data) {
+    let output = [];
+    // let out = [];
+    // const timeList = [];
+    const timeList = [];
+    const priceList = [];
+    const capList = [];
+    tokens.forEach((x, i) => {
+        // console.log(x)
+        // console.log(data)
+        if (i === 0) {
+            output = data[x]
+        } else {
+            data[x].forEach((y, h) => {
+                // console.log(output[h])
+                if (output[h] !== undefined) {
+                    output[h].price = (output[h].price + y.price) / tokens.length / 2
+                    output[h].market_cap = (output[h].market_cap + y.market_cap) / tokens.length / 2
+                }
+            })
+        }
+    })
+
+    output.forEach((x, i) => {
+        // out.push([x.timestamp, x.price, x.market_cap]);
+        timeList.push([x.timestamp, x.price]);
+        priceList.push([x.timestamp, x.price]);
+        capList.push([x.timestamp, x.market_cap]);
+    })
+    // console.log(output);
+    return [timeList, priceList];
+}
+
+
